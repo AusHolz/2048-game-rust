@@ -28,8 +28,39 @@ impl Game {
         *chosen_zero = nums[0];
     }
 
-    fn compute_line_push<'a>(iter: impl Iterator<Item = &'a mut u32>) {
-        // TODO
+    fn compute_line_push<'a>(mut line: Vec<&'a mut u32>) {
+        // Iterates over immutable references with indices of all elements except the last one. Filter out zeros
+        let line_ref: Vec<&u32> = line.iter().map(|val| &**val).collect();
+        let mut pair_find_iter = 
+            line_ref
+            .iter()
+            .take(line_ref.len() - 1)
+            .enumerate()
+            .filter(|(i, val)| ***val == 0);
+
+        // Collect all the pairs that need to be merged
+        let mut pairs: Vec<(usize, usize)> = Vec::new();
+        loop {
+            if let Some((i, &&val)) = pair_find_iter.next() {
+                let &neighbour_val = line_ref[i + 1];
+                if val == neighbour_val { pairs.push((i, i + 1)); }
+                pair_find_iter.next();
+            } else {
+                break
+            }
+        }
+
+        // Merge the pairs and move everything to the start of the line
+        for (index_1, index_2) in pairs {
+            *line[index_1] *= 2;
+            *line[index_2] = 0;
+        }
+
+        let line_values: Vec<u32> = line.iter().map(|x| **x).filter(|val| *val != 0).collect();
+        for (i, val) in line.iter_mut().enumerate() {
+            if line_values.len() > i { **val = line_values[i] }
+            else { **val = 0 }
+        }
     }
 
     fn compute_grid_push(&mut self, dir: Direction) {
