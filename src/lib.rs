@@ -7,10 +7,14 @@ struct Game {
 }
 
 impl Game {
+    // Initializes the game grid with only zeros and one randomly playced 2 or 4
     fn build(cols: usize, rows: usize) -> Self {
-        Game { game_grid: Matrix::build_zeros(cols, rows) }
+        let mut game = Game { game_grid: Matrix::build_zeros(cols, rows) };
+        game.place_value_randomly();
+        game
     }
 
+    // Places a 2 or 4 at a randomly chosen zero spot in the game grid
     fn place_value_randomly(&mut self) {
         let mut rng = rand::rng();  
 
@@ -23,7 +27,17 @@ impl Game {
         nums.shuffle(&mut rng);
         *chosen_zero = nums[0];
     }
+
+    fn compute_line_push<'a>(iter: impl Iterator<Item = &'a mut u32>) {
+        // TODO
+    }
+
+    fn compute_grid_push(&mut self, dir: Direction) {
+        // Use the iterators from Matrix and compute_line_push here
+    }
 }
+
+enum Direction { Left, Right, Up, Down }
 
 // Generic matrix struct that is used as the game grid
 struct Matrix<T> {
