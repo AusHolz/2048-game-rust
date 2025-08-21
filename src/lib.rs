@@ -14,6 +14,15 @@ impl Matrix<u32> {
 }
 
 impl<T> Matrix<T> {
+    fn overwrite_at(&mut self, col_idx: usize, row_idx: usize, value: T) {
+        let cols = self.cols;
+        let rows = self.rows;
+
+        if col_idx >= cols || row_idx >= rows { panic!("Col/Row index out of bounds!") }
+
+        self.matrix_vec[col_idx * rows + row_idx] = value;
+    }
+
     fn iter_col_mut(&mut self, col_idx: usize) -> impl Iterator<Item = &mut T> {
         if self.cols <= col_idx {panic!("Column index out of bounds!")}
 
