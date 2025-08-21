@@ -1,11 +1,38 @@
 #![allow(unused)]
 
+use rand::prelude::*;
+
+struct Game {
+    game_grid: Matrix<u32>
+}
+
+impl Game {
+    fn build(cols: usize, rows: usize) -> Self {
+        Game { game_grid: Matrix::build_zeros(cols, rows) }
+    }
+
+    fn place_value_randomly(&mut self) {
+        let mut rng = rand::rng();  
+
+        // Choose a empty (val == 0) spot in the game field at random
+        let zero_iter = self.game_grid.matrix_vec.iter_mut().filter(|&&mut val| val == 0);
+        let chosen_zero = zero_iter.choose(&mut rng).unwrap();
+
+        // Put either 2 or 4 in the chosen spot
+        let mut nums= [2, 4];
+        nums.shuffle(&mut rng);
+        *chosen_zero = nums[0];
+    }
+}
+
+// Generic matrix struct that is used as the game grid
 struct Matrix<T> {
     matrix_vec: Vec<T>,
     cols: usize,
     rows: usize
 }
 
+// Used to initialize a rectangular matrix with only zero entries
 impl Matrix<u32> {
     fn build_zeros(cols: usize, rows: usize) -> Self {
         let matrix_vec = vec![0; cols * rows];
@@ -13,6 +40,7 @@ impl Matrix<u32> {
     }
 }
 
+// Implements useful functions to iterate over single cols or rows and to change single entries
 impl<T> Matrix<T> {
     fn overwrite_at(&mut self, col_idx: usize, row_idx: usize, value: T) {
         let cols = self.cols;
